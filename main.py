@@ -48,3 +48,25 @@ print("\nFailure Count (Target Variable):")
 print(data['Failure_Flag'].value_counts())
 
 
+# ==============================================================================
+# CELL 2: Exploratory Data Analysis (EDA)
+# ==============================================================================
+
+# Visualize the distribution of the target variable
+plt.figure(figsize=(6, 4))
+sns.countplot(x='Failure_Flag', data=data)
+plt.title('Distribution of Failure Flag (0=Normal, 1=Failure)')
+plt.show()
+
+# Visualize a key feature (Temperature) based on the target class
+plt.figure(figsize=(8, 5))
+sns.boxplot(x='Failure_Flag', y='Temperature', data=data)
+plt.title('Temperature Distribution by Failure Status')
+plt.show()
+
+# Correlate features with the Failure Flag
+correlation_matrix = data.corr()
+print("\n--- Correlation Matrix (Focus on 'Failure_Flag' row) ---")
+print(correlation_matrix['Failure_Flag'].sort_values(ascending=False))
+
+
