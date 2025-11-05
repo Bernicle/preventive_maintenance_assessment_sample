@@ -121,3 +121,44 @@ print("\n--- Confusion Matrix ---")
 # [False Negatives, True Positives]
 print(confusion_matrix(y_test, y_pred))
 
+
+# ==============================================================================
+# CELL 6: Feature Importance and Conclusion
+# ==============================================================================
+
+# Extract feature importance from the trained model
+feature_importances = pd.Series(model.feature_importances_, index=X.columns).sort_values(ascending=False)
+
+print("\n--- Feature Importance (Which factors drive the prediction) ---")
+print(feature_importances)
+
+# Plot feature importance for visualization
+plt.figure(figsize=(8, 6))
+sns.barplot(x=feature_importances.values, y=feature_importances.index)
+plt.title('Feature Importance for Failure Prediction')
+plt.xlabel('Importance Score')
+plt.ylabel('Sensor Data')
+plt.show()
+
+# --- Example of a live prediction (How you'd use it with new IoT data) ---
+# Assume new data comes from an RPI/sensor
+live_sensor_data = pd.DataFrame({
+    'Temperature': [75.0],      # High reading
+    'Vibration_Level': [3.8],   # High reading
+    'Pressure_Drop': [8.0],     # Low reading
+    'Operating_Hours': [8500]
+})
+
+# Predict the outcome (0 or 1)
+live_prediction = model.predict(live_sensor_data)
+live_proba = model.predict_proba(live_sensor_data)
+
+print("\n--- Live Preventive Maintenance Assessment ---")
+print(f"Input Data:\n{live_sensor_data}")
+print(f"Prediction (0=Normal, 1=Failure): {live_prediction[0]}")
+print(f"Probability of Failure: {live_proba[0][1]:.2f}")
+
+if live_prediction[0] == 1:
+    print("\n**MAINTENANCE ALERT: High probability of impending failure. Schedule immediate inspection.**")
+else:
+    print("\nStatus is normal.")
