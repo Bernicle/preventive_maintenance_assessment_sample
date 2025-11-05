@@ -70,3 +70,54 @@ print("\n--- Correlation Matrix (Focus on 'Failure_Flag' row) ---")
 print(correlation_matrix['Failure_Flag'].sort_values(ascending=False))
 
 
+# ==============================================================================
+# CELL 3: Data Preprocessing and Splitting
+# ==============================================================================
+
+# Define features (X) and target (y)
+X = data.drop('Failure_Flag', axis=1) # Features are all columns EXCEPT 'Failure_Flag'
+y = data['Failure_Flag']              # Target variable
+
+# Split data into training and testing sets (70% train, 30% test)
+# 'stratify=y' ensures both train and test sets have the same proportion of failures
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=42, stratify=y
+)
+
+print(f"Total instances: {N}")
+print(f"Training set size: {len(X_train)}")
+print(f"Test set size: {len(X_test)}")
+
+
+# ==============================================================================
+# CELL 4: Model Training (Random Forest Classifier)
+# ==============================================================================
+
+# Initialize the classifier (Random Forest is good for classification tasks)
+# n_estimators is the number of trees in the forest
+model = RandomForestClassifier(n_estimators=100, random_state=42, class_weight='balanced')
+print("Starting Model Training...")
+
+# Train the model using the training data
+model.fit(X_train, y_train)
+
+print("Model Training Complete.")
+
+
+# ==============================================================================
+# CELL 5: Prediction and Model Assessment
+# ==============================================================================
+
+# Make predictions on the unseen test data
+y_pred = model.predict(X_test)
+
+# --- Assessment ---
+print("\n--- Model Assessment (Classification Report) ---")
+# Precision, Recall, F1-Score are key metrics, especially for the '1' class (Failure)
+print(classification_report(y_test, y_pred, target_names=['Normal (0)', 'Failure (1)']))
+
+print("\n--- Confusion Matrix ---")
+# [True Negatives, False Positives]
+# [False Negatives, True Positives]
+print(confusion_matrix(y_test, y_pred))
+
